@@ -6,7 +6,6 @@ const routes = require('./routes');
 const { PORT = 3000 } = process.env;
 const app = express();
 
-
 app.use(bodyParser.json());
 app.use((req, res, next) => {
   req.user = {

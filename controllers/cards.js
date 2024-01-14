@@ -4,13 +4,12 @@ const { BAD_REQUEST, NOT_FOUND, SERVER_ERROR } = require('../utils/errors');
 module.exports.getCards = (req, res) => {
   Card.find({})
     .then((cards) => res.status(200).send(cards))
-    .catch(() => res.status(SERVER_ERROR).send({ message: 'Произошла ошибка на сервере'}));
+    .catch(() => res.status(SERVER_ERROR).send({ message: 'Произошла ошибка на сервере' }));
 };
 
 module.exports.createCard = (req, res) => {
   const { name, link } = req.body;
   const owner = req.user._id;
-  
   return Card.create({ name, link, owner })
     .then((card) => res.status(200).send(card))
     .catch((err) => {
@@ -40,7 +39,7 @@ module.exports.deleteCard = (req, res) => {
 };
 
 module.exports.likeCard = (req, res) => {
-  Cards.findByIdAndUpdate(
+  Card.findByIdAndUpdate(
     req.params.cardId,
     { $addToSet: { likes: req.user._id } },
     { new: true },
@@ -59,7 +58,7 @@ module.exports.likeCard = (req, res) => {
 };
 
 module.exports.dislikeCard = (req, res) => {
-  Cards.findByIdAndUpdate(
+  Card.findByIdAndUpdate(
     req.params.cardId,
     { $pull: { likes: req.user._id } },
     { new: true },

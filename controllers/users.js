@@ -4,14 +4,14 @@ const { BAD_REQUEST, NOT_FOUND, SERVER_ERROR } = require('../utils/errors');
 module.exports.getUsers = (req, res) => {
   User.find({})
     .then((users) => res.status(200).send(users))
-    .catch(() => res.status(SERVER_ERROR).send({ message: 'Произошла ошибка на сервере'}))
+    .catch(() => res.status(SERVER_ERROR).send({ message: 'Произошла ошибка на сервере' }));
 };
 
 module.exports.getUser = (req, res) => {
   const { userId } = req.params;
 
   return User.findById(userId)
-    .orFail(() => new Error ('NotFound'))
+    .orFail(() => new Error('NotFound'))
     .then((user) => res.status(200).send(user))
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -46,7 +46,7 @@ module.exports.updateProfile = (req, res) => {
     { name, about },
     { new: true, runValidators: true },
   )
-    .orFail(() => new Error ('NotFound'))
+    .orFail(() => new Error('NotFound'))
     .then((user) => res.status(200).send(user))
     .catch((err) => {
       if (err.name === 'ValidationError' || err.name === 'CastError') {
