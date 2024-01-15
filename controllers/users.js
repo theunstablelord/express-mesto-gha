@@ -1,9 +1,9 @@
 const User = require('../models/user');
-const { BAD_REQUEST, NOT_FOUND, SERVER_ERROR } = require('../utils/errors');
+const { BAD_REQUEST, NOT_FOUND, SERVER_ERROR, OK } = require('../utils/errors');
 
 module.exports.getUsers = (req, res) => {
   User.find({})
-    .then((users) => res.status(200).send(users))
+    .then((users) => res.status(OK).send(users))
     .catch(() => res.status(SERVER_ERROR).send({ message: 'Произошла ошибка на сервере' }));
 };
 
@@ -12,7 +12,7 @@ module.exports.getUser = (req, res) => {
 
   return User.findById(userId)
     .orFail(() => new Error('NotFound'))
-    .then((user) => res.status(200).send(user))
+    .then((user) => res.status(OK).send(user))
     .catch((err) => {
       if (err.name === 'CastError') {
         res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
@@ -28,9 +28,9 @@ module.exports.createUser = (req, res) => {
   const { name, about, avatar } = req.body;
 
   return User.create({ name, about, avatar })
-    .then((user) => res.status(200).send(user))
+    .then((user) => res.status(OK).send(user))
     .catch((err) => {
-      if (err.name === 'ValidationError' || err.name === 'CastError') {
+      if (err.name === 'ValidationError') {
         res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
       } else {
         res.status(SERVER_ERROR).send({ message: 'Произошла ошибка на сервере' });
@@ -47,9 +47,9 @@ module.exports.updateProfile = (req, res) => {
     { new: true, runValidators: true },
   )
     .orFail(() => new Error('NotFound'))
-    .then((user) => res.status(200).send(user))
+    .then((user) => res.status(OK).send(user))
     .catch((err) => {
-      if (err.name === 'ValidationError' || err.name === 'CastError') {
+      if (err.name === 'ValidationError') {
         res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
       } else if (err.message === 'NotFound') {
         res.status(NOT_FOUND).send({ message: 'Пользователь по указанному _id не найден' });
@@ -68,9 +68,9 @@ module.exports.updateAvatar = (req, res) => {
     { new: true, runValidators: true },
   )
     .orFail(() => new Error('NotFound'))
-    .then((user) => res.status(200).send(user))
+    .then((user) => res.status(OK).send(user))
     .catch((err) => {
-      if (err.name === 'ValidationError' || err.name === 'CastError') {
+      if (err.name === 'ValidationError') {
         res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
       } else if (err.message === 'NotFound') {
         res.status(NOT_FOUND).send({ message: 'Пользователь с указанным _id не найден' });
