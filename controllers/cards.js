@@ -1,9 +1,9 @@
 const Card = require('../models/card');
-const { BAD_REQUEST, NOT_FOUND, SERVER_ERROR } = require('../utils/errors');
+const { BAD_REQUEST, NOT_FOUND, SERVER_ERROR, OK } = require('../utils/errors');
 
 module.exports.getCards = (req, res) => {
   Card.find({})
-    .then((cards) => res.status(200).send(cards))
+    .then((cards) => res.status(OK).send(cards))
     .catch(() => res.status(SERVER_ERROR).send({ message: 'Произошла ошибка на сервере' }));
 };
 
@@ -11,7 +11,7 @@ module.exports.createCard = (req, res) => {
   const { name, link } = req.body;
   const owner = req.user._id;
   return Card.create({ name, link, owner })
-    .then((card) => res.status(200).send(card))
+    .then((card) => res.status(OK).send(card))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
@@ -26,7 +26,7 @@ module.exports.deleteCard = (req, res) => {
 
   return Card.findByIdAndRemove(cardId)
     .orFail(() => new Error('NotFound'))
-    .then((card) => res.status(200).send(card))
+    .then((card) => res.status(OK).send(card))
     .catch((err) => {
       if (err.name === 'CastError') {
         res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
@@ -45,7 +45,7 @@ module.exports.likeCard = (req, res) => {
     { new: true },
   )
     .orFail(() => new Error('NotFound'))
-    .then((card) => res.status(200).send(card))
+    .then((card) => res.status(OK).send(card))
     .catch((err) => {
       if (err.name === 'CastError') {
         res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
@@ -64,7 +64,7 @@ module.exports.dislikeCard = (req, res) => {
     { new: true },
   )
     .orFail(() => new Error('NotFound'))
-    .then((card) => res.status(200).send(card))
+    .then((card) => res.status(OK).send(card))
     .catch((err) => {
       if (err.name === 'CastError') {
         res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
