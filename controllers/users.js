@@ -23,11 +23,9 @@ module.exports.getUser = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         return next(new BadRequest('Переданы некорректные данные'));
-      } else if (err.message === 'NotFound') {
-        return next (new NotFound('Пользователь по указанному _id не найден'));
       }
       return next(err);
-    })
+    });
 };
 
 module.exports.createUser = (req, res, next) => {
@@ -35,18 +33,19 @@ module.exports.createUser = (req, res, next) => {
     name, about, avatar, email,
   } = req.body;
   bcrypt.hash(req.body.password, 10)
-    .then((hash) =>  User.create({
-        name, about, avatar, email, password: hash,
-      }))
+    .then((hash) => User.create({
+      name, about, avatar, email, password: hash,
+    }))
     .then((user) => res.status(OBJECT_CREATED).send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return next (new BadRequest('Переданы некорректные данные'));
-      } else if (err.code === 11000) {
+        return next(new BadRequest('Переданы некорректные данные'));
+      }
+      if (err.code === 11000) {
         return next(new ConflictError('Произошла ошибка на сервере'));
       }
       return next(err);
-    })
+    });
 };
 
 module.exports.updateProfile = (req, res, next) => {
@@ -66,7 +65,7 @@ module.exports.updateProfile = (req, res, next) => {
         return next(new BadRequest('Переданы некорректные данные'));
       }
       return next(err);
-    })
+    });
 };
 
 module.exports.updateAvatar = (req, res, next) => {
@@ -86,7 +85,7 @@ module.exports.updateAvatar = (req, res, next) => {
         return next(new BadRequest('Переданы некорректные данные'));
       }
       return next(err);
-    })
+    });
 };
 
 module.exports.login = (req, res, next) => {
@@ -107,9 +106,7 @@ module.exports.getCurrentUser = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         return next(new BadRequest('Переданы некорректные данные'));
-      } else if (err.message === 'NotFound') {
-        return next (new NotFound('Пользователь не найден'));
       }
       return next(err);
-    })
+    });
 };
