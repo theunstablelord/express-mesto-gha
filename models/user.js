@@ -22,7 +22,7 @@ const userSchema = new mongoose.Schema({
     default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
     validate: {
       validator: (url) => isUrl(url),
-      message: 'Некорректный адрес URL'
+      message: 'Некорректный адрес URL',
     },
   },
   email: {
@@ -31,7 +31,7 @@ const userSchema = new mongoose.Schema({
     unique: true,
     validate: {
       validator: (email) => isEmail(email),
-      message: 'Некорректный адрес электронной почты'
+      message: 'Некорректный адрес электронной почты',
     },
   },
   password: {
@@ -42,6 +42,7 @@ const userSchema = new mongoose.Schema({
   },
 });
 
+// eslint-disable-next-line func-names
 userSchema.statics.findUserByCredentials = function (email, password) {
   return this.findOne({ email }).select('+password')
     .then((user) => {

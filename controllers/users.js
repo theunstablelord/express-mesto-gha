@@ -4,7 +4,7 @@ const User = require('../models/user');
 const BadRequest = require('../errors/BadRequest');
 const NotFound = require('../errors/NotFoundError');
 const ConflictError = require('../errors/ConflictError');
-const { OK, OBJECT_CREATED} = require('../utils/constants');
+const { OK, OBJECT_CREATED } = require('../utils/constants');
 
 module.exports.getUsers = (req, res, next) => {
   User.find({})
@@ -22,19 +22,23 @@ module.exports.getUser = (req, res, next) => {
     .then((user) => res.status(OK).send(user))
     .catch((err) => {
       if (err.name === 'CastError') {
-        throw new BadRequest ('Переданы некорректные данные');
+        throw new BadRequest('Переданы некорректные данные');
       } else if (err.message === 'NotFound') {
-        throw new NotFound ('Пользователь по указанному _id не найден');
-      } 
+        throw new NotFound('Пользователь по указанному _id не найден');
+      }
     })
     .catch(next);
 };
 
 module.exports.createUser = (req, res, next) => {
-  const { name, about, avatar, email } = req.body;
+  const { 
+    name, about, avatar, email
+  } = req.body;
   bcrypt.hash(req.body.password, 10)
     .then((hash) => {
-      User.create({ name, about, avatar, email, password: hash, });
+      User.create({ 
+        name, about, avatar, email, password: hash, 
+      });
     })
     .then((user) => res.status(OBJECT_CREATED).send(user))
     .catch((err) => {
@@ -82,7 +86,7 @@ module.exports.updateAvatar = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         throw new BadRequest('Переданы некорректные данные');
-      } 
+      }
     })
     .catch(next);
 };

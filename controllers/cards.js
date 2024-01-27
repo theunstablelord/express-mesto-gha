@@ -28,11 +28,11 @@ module.exports.deleteCard = (req, res, next) => {
 
   return Card.findById(cardId)
     .orFail(() => {
-      throw new NotFound('_id указанной карточки не найден')
+      throw new NotFound('_id указанной карточки не найден');
     })
     .then((card) => {
       if (card.owner.toString() === req.user._id) {
-        Cards.findByIdAndRemove(cardId).then(() => res.status(OK).send(card))
+        Card.findByIdAndRemove(cardId).then(() => res.status(OK).send(card));
       } else {
         throw new ForbiddenError('Удаление чужой карточки невозможно');
       }
@@ -40,7 +40,7 @@ module.exports.deleteCard = (req, res, next) => {
     .catch(next);
 };
 
-module.exports.likeCard = (req, res) => {
+module.exports.likeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $addToSet: { likes: req.user._id } },
@@ -60,7 +60,7 @@ module.exports.likeCard = (req, res) => {
     .catch(next);
 };
 
-module.exports.dislikeCard = (req, res) => {
+module.exports.dislikeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $pull: { likes: req.user._id } },

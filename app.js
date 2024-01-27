@@ -1,12 +1,12 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const routes = require('./routes');
 const { errors } = require('celebrate');
+const routes = require('./routes');
 const { createUser, login } = require('./controllers/users');
 const {
   validationCreateUser,
-  validationLogin
+  validationLogin,
 } = require('./middlewares/validations');
 const auth = require('./middlewares/auth');
 const handleError = require('./middlewares/handleError');
@@ -16,8 +16,8 @@ const app = express();
 
 app.use(bodyParser.json());
 
-app.post('/signin', validationCreateUser, login);
-app.post('/signup', validationLogin, createUser);
+app.post('/signin', validationLogin, login);
+app.post('/signup', validationCreateUser, createUser);
 
 app.use(auth);
 app.use(routes);
