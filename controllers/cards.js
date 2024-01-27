@@ -1,5 +1,5 @@
 const Card = require('../models/card');
-const { OK } = require('../utils/constants');
+const { OK, OBJECT_CREATED } = require('../utils/constants');
 const BadRequest = require('../errors/BadRequest');
 const NotFound = require('../errors/NotFoundError');
 const ForbiddenError = require('../errors/ForbiddenError');
@@ -14,13 +14,13 @@ module.exports.createCard = (req, res, next) => {
   const { name, link } = req.body;
   const owner = req.user._id;
   return Card.create({ name, link, owner })
-    .then((card) => res.status(OK).send(card))
+    .then((card) => res.status(OBJECT_CREATED).send(card))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        throw new BadRequest('Переданы некорректные данные');
+        return next(new BadRequest('Переданы некорректные данные'));
       }
+      return next(err);
     })
-    .catch(next);
 };
 
 module.exports.deleteCard = (req, res, next) => {
@@ -52,12 +52,11 @@ module.exports.likeCard = (req, res, next) => {
     .then((card) => res.status(OK).send(card))
     .catch((err) => {
       if (err.name === 'CastError') {
-        throw new BadRequest('Переданы некорректные данные');
-      } else if (err.message === 'NotFound') {
-        throw new NotFound('_id указанной карточки не найден');
+        return next(new BadRequest('Переданы некорректные данные'));
+      } else {
+        next(err);
       }
     })
-    .catch(next);
 };
 
 module.exports.dislikeCard = (req, res, next) => {
@@ -73,9 +72,8 @@ module.exports.dislikeCard = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         throw new BadRequest('Переданы некорректные данные');
-      } else if (err.message === 'NotFound') {
-        throw new NotFound('_id указанной карточки не найден');
+      } else {
+        next(err);
       }
     })
-    .catch(next);
 };

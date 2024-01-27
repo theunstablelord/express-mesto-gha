@@ -22,12 +22,12 @@ module.exports.getUser = (req, res, next) => {
     .then((user) => res.status(OK).send(user))
     .catch((err) => {
       if (err.name === 'CastError') {
-        throw new BadRequest('Переданы некорректные данные');
+        return next(new BadRequest('Переданы некорректные данные'));
       } else if (err.message === 'NotFound') {
-        throw new NotFound('Пользователь по указанному _id не найден');
+        return next (new NotFound('Пользователь по указанному _id не найден'));
       }
+      return next(err);
     })
-    .catch(next);
 };
 
 module.exports.createUser = (req, res, next) => {
@@ -35,20 +35,18 @@ module.exports.createUser = (req, res, next) => {
     name, about, avatar, email,
   } = req.body;
   bcrypt.hash(req.body.password, 10)
-    .then((hash) => {
-      User.create({
+    .then((hash) =>  User.create({
         name, about, avatar, email, password: hash,
-      });
-    })
+      }))
     .then((user) => res.status(OBJECT_CREATED).send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        throw new BadRequest('Переданы некорректные данные');
+        return next (new BadRequest('Переданы некорректные данные'));
       } else if (err.code === 11000) {
-        throw new ConflictError('Произошла ошибка на сервере');
+        return next(new ConflictError('Произошла ошибка на сервере'));
       }
+      return next(err);
     })
-    .catch(next);
 };
 
 module.exports.updateProfile = (req, res, next) => {
@@ -65,10 +63,10 @@ module.exports.updateProfile = (req, res, next) => {
     .then((user) => res.status(OK).send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        throw new BadRequest('Переданы некорректные данные');
+        return next(new BadRequest('Переданы некорректные данные'));
       }
+      return next(err);
     })
-    .catch(next);
 };
 
 module.exports.updateAvatar = (req, res, next) => {
@@ -85,10 +83,10 @@ module.exports.updateAvatar = (req, res, next) => {
     .then((user) => res.status(OK).send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        throw new BadRequest('Переданы некорректные данные');
+        return next(new BadRequest('Переданы некорректные данные'));
       }
+      return next(err);
     })
-    .catch(next);
 };
 
 module.exports.login = (req, res, next) => {
@@ -108,10 +106,10 @@ module.exports.getCurrentUser = (req, res, next) => {
     .then((user) => res.status(OK).send({ user }))
     .catch((err) => {
       if (err.name === 'CastError') {
-        throw new BadRequest('Переданы некорректные данные');
+        return next(new BadRequest('Переданы некорректные данные'));
       } else if (err.message === 'NotFound') {
-        throw new NotFound('Пользователь не найден');
+        return next (new NotFound('Пользователь не найден'));
       }
+      return next(err);
     })
-    .catch(next);
 };
